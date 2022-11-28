@@ -1,0 +1,253 @@
+<!-- FILTROS -->
+<div>
+    <div  style="display: flex; justify-content: center;" nz-row>
+        <div style="text-align: center;" nz-col nzSpan="6">
+            <h3>Rango de Tiempo</h3>
+        </div>
+    </div>
+    <form nz-form [formGroup]="validateForm" >
+    <div   style="display: flex; " nz-row>
+
+        <div class="margenesFiltros" nz-col nzSpan="6" nzOffset="3">
+            <nz-input-group nzAddOnBefore="Tiempo" nzSize="small" >
+                <nz-select nzSize="small" formControlName="tiempo" (ngModelChange)="changeFecha($event)" style="width: 100%;">
+                    <nz-option nzLabel="Ayer" [nzValue]=1></nz-option>
+                    <nz-option nzLabel="Esta Semana hasta la fecha" [nzValue]=2></nz-option>
+                    <nz-option nzLabel="Este Mes hasta la fecha" [nzValue]=6></nz-option>
+                    <nz-option nzLabel="Este Año hasta la fecha" [nzValue]=3></nz-option>
+                    <nz-option nzLabel="Ultima semana" [nzValue]=4></nz-option>
+                    <nz-option nzLabel="Ultimas 2 semanas" [nzValue]=5></nz-option>
+                    <nz-option nzLabel="Ultimo mes" [nzValue]=7></nz-option>
+                    <nz-option nzLabel="Ultimo año" [nzValue]=8></nz-option>
+                    <nz-option nzLabel="Rango de fecha" [nzValue]=9></nz-option>
+                </nz-select>
+            </nz-input-group>
+
+        </div>
+        <div class="margenesFiltros" nz-col nzSpan="6"   style="display: flex; justify-content: center;">
+                <nz-input-group nzAddOnBefore="Fecha" nzSize="default">
+                    <nz-range-picker [nzShowTime]="true"
+                        nzFormat="yyyy-MM-dd HH:mm" nzSize="small" formControlName="fecha" [nzDisabled]="habilitarfecha">
+                    </nz-range-picker>
+                </nz-input-group>
+              
+        </div>
+
+    </div>
+</form>
+
+    <div nz-row  style="display: flex; justify-content: center;">
+        <div nz-col >
+            <button nz-button class="margenesFiltros" (click)="mostrar()"
+                style="background-color: #009bca; border-color: #009bca;" nzType="primary" nzSize="small"><i nz-icon
+                    nzType="search"></i>Mostrar</button>
+            <button nz-button class="margenesFiltros" style="background-color: #439d16; border-color: #439d16;"
+                nzType="primary" nzSize="small"><i nz-icon nzType="file-excel"></i>Excel</button>
+            <button nz-button class="margenesFiltros" (click)="imprimir()"
+                style="background-color: #c41a1a; border-color: #c41a1a;" nzType="primary" nzSize="small"><i nz-icon
+                    nzType="printer"></i>Imprimir</button>
+        </div>
+
+    </div>
+
+
+</div>
+
+<!-- REPORTE -->
+
+<div id="content">
+    <div nz-row>
+        <div nz-col nzSpan="24" style="display: flex; justify-content: center;">
+            <img src="assets/Gildan_logo.png" class="logo">
+        </div>
+    </div>
+    <div nz-row nzAlign="middle">
+        <div nz-col nzSpan="24">
+            <h2 style="display: flex; justify-content: center; font-size: 26px;"> BALANCE DE AGUA </h2>
+        </div>
+    </div>
+
+    <div nz-row >
+        <div  nz-col nzSpan="24"  style="padding-left: 15px; padding-right: 15px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;"></h4>
+                    </div>
+                </div>
+                <div style="background-color: #c3eaf6;" class="card-body" style="font-size: 13px; height: 140px;" >
+                    <p><span>Tipo de reporte: Balance de agua</span></p>
+                    <p><span>Ubicacion: Todas las plantas</span></p>
+                    <p><span>Fecha inicial: </span>{{fechaInicio}}</p>
+                    <p><span>Fecha final: </span>{{fechaFin}}</p>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <div nz-row>
+        <div nz-col nzSpan="12" style="padding-left: 15px; padding-right: 15px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Agua consumida (m3)</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <tr class="headerTable">
+                            <th>PLANTA</th>
+                            <th style="text-align: center;">CONSUMO (Agua fría)</th>
+                            <!-- <th style="text-align: center;">CONSUMO (Agua caliente)</th> -->
+                        </tr>
+                        <tr *ngFor="let data of dataConsumo">
+                            <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
+                            <td style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
+                            <!-- <td style="text-align: center;">{{ data.consumocalientetotal  | number:'1.2-2':'en-US'}}</td> -->
+                        </tr>
+                        <tr >
+                            <th>Total Consumo</th>
+                            <th style="text-align: center; font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</th>
+                            <!-- <td style="text-align: center; font-weight: bold;">{{ totalConsumoCaliente | number:'1.2-2':'en-US'}}</td> -->
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div nz-col nzSpan="12" style="padding-left: 15px; padding-right: 15px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Agua pruducida (m3)</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <tr class="headerTable">
+                            <th>PLANTA</th>
+                            <th style="text-align: center;">Pruducción</th>
+                        </tr>
+                        <tr *ngFor="let data of dataConsumo">
+                            <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
+                            <td style="text-align: center;">{{ data.producciontotal | number:'1.2-2':'en-US'}}</td>
+                        </tr>
+                        <tr >
+                            <th>Total Produccion</th>
+                            <th style="text-align: center; font-weight: bold;">{{totalProduccion  | number:'1.2-2':'en-US'}}</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div nz-row>
+        <div nz-col nzSpan="12" style="padding-left: 15px; padding-right: 8px;">
+            <div class="grafico">
+                <div class="card-header" style="background: #aad6fd;">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Consumo plantas</h4>
+                    </div>
+                </div>
+                <div class="card-body-Grafico">
+                    <div>
+                        <canvas id="canvasConsumo">{{chartConsumo}}</canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div nz-col nzSpan="12" style="padding-left: 15px; padding-right: 8px;">
+            <div class="grafico">
+                <div class="card-header" style="background: #aad6fd;">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Producción plantas</h4>
+                    </div>
+                </div>
+                <div class="card-body-Grafico">
+
+                    <div>
+                        <canvas id="canvasProduccion">{{chartProduccion}}</canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div nz-row>
+       <!--  <div nz-col nzSpan="12" style="padding-left: 15px; padding-right: 8px;">
+            <div class="card">
+                <div class="card-header" style="background: #aad6fd;">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Tabla comparativa (producción, agua caliente, agua fría)</h4>
+                    </div>
+                </div>
+                <div class="card-body-Grafico">
+
+                    <div>
+                        <canvas id="densityChart" width="600" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 8px;">
+            <div class="card">
+                <div class="card-header" style="background: #aad6fd;">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Tabla comparativa (producción, total agua consumida)</h4>
+                    </div>
+                </div>
+                <div class="card-body-Grafico">
+
+                    <div>
+                        <canvas id="aguaVSproduccion" width="1000px" height="400"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div nz-row>
+        <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 15px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;">Cuadro comparativo</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <tr class="headerTable">
+                            <th>PLANTA</th>
+                            <th style="text-align: center;">Consumo (Agua fría)</th>
+                            <!-- <th style="text-align: center;">Consumo (Agua caliente)</th> -->
+                            <th style="text-align: center;">Producción </th>
+                            <th style="text-align: center;">Producción - Consumo total </th>
+                        </tr>
+                        <tr *ngFor="let data of dataConsumo">
+                            <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
+                            <td style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
+                            <!-- <td style="text-align: center;">{{ data.consumocalientetotal  | number:'1.2-2':'en-US'}}</td> -->
+                            <td style="text-align: center;">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
+                            <td style="text-align: center;">{{ data.producciontotal - (data.consumototal) | number:'1.2-2':'en-US'}}</td>
+                        </tr>
+                        <tr >
+                            <th>Total Consumo</th>
+                            <th style="text-align: center; font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</th>
+                            <!-- <td style="text-align: center; font-weight: bold;">{{ totalConsumoCaliente | number:'1.2-2':'en-US'}}</td> -->
+                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion| number:'1.2-2':'en-US'}}</td>
+                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion - (totalConsumo)| number:'1.2-2':'en-US'}}</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <br>
+    <br>
+</div>
+
