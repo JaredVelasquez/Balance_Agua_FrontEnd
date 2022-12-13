@@ -14,6 +14,10 @@ import { IconsProviderModule } from './../../icons-provider.module';
 
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDropDownModule } from 'ng-zorro-antd/dropdown';
+import { NzBadgeModule } from 'ng-zorro-antd/badge';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 
 @NgModule({
   imports: [WelcomeRoutingModule, 
@@ -27,7 +31,11 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
     ReactiveFormsModule,
     IconsProviderModule,
     NzIconModule,
-    NzButtonModule
+    NzButtonModule,
+    NzTableModule,
+    NzDropDownModule,
+    NzBadgeModule,
+    NzDividerModule
     
   ],
   declarations: [WelcomeComponent],
