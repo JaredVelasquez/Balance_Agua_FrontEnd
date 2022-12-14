@@ -40,12 +40,13 @@
         <div nz-col >
             <button nz-button class="margenesFiltros" (click)="mostrar()"
                 style="background-color: #009bca; border-color: #009bca;" nzType="primary" nzSize="small"><i nz-icon
-                    nzType="search"></i>Mostrar</button>
-            <button nz-button class="margenesFiltros" style="background-color: #439d16; border-color: #439d16;"
+                    nzType="search"></i>Consultar</button>
+            <button nz-button class="margenesFiltros"  (click)="excel()"
+            style="background-color: #439d16; border-color: #439d16;"
                 nzType="primary" nzSize="small"><i nz-icon nzType="file-excel"></i>Excel</button>
-            <button nz-button class="margenesFiltros" (click)="imprimir()"
+            <button nz-button class="margenesFiltros" (click)="pdf()"
                 style="background-color: #c41a1a; border-color: #c41a1a;" nzType="primary" nzSize="small"><i nz-icon
-                    nzType="printer"></i>Imprimir</button>
+                    nzType="printer"></i>Pdf</button>
         </div>
 
     </div>
@@ -75,11 +76,9 @@
                         <h4 style="font-size: 18px;"></h4>
                     </div>
                 </div>
-                <div style="background-color: #c3eaf6;" class="card-body" style="font-size: 13px; height: 140px;" >
-                    <p><span>Tipo de reporte: Balance de agua</span></p>
+                <div style="background-color: #c3eaf6;" class="card-body" style="font-size: 13px; height: 80px;" >
                     <p><span>Ubicacion: Todas las plantas</span></p>
-                    <p><span>Fecha inicial: </span>{{fechaInicio}}</p>
-                    <p><span>Fecha final: </span>{{fechaFin}}</p>
+                    <p><span>Fecha: </span>{{fechaInicio}} a {{fechaFin}}</p>
                 </div>
                 
             </div>
