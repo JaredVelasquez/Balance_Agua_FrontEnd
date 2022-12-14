@@ -64,7 +64,7 @@
     </div>
     <div nz-row nzAlign="middle">
         <div nz-col nzSpan="24">
-            <h2 style="display: flex; justify-content: center; font-size: 26px;"> BALANCE DE AGUA </h2>
+            <h2 style="display: flex; justify-content: center; font-size: 26px;"> Balance de agua</h2>
         </div>
     </div>
 
@@ -95,23 +95,61 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table>
+                    <!-- <nz-table>
                         <tr class="headerTable">
-                            <th>PLANTA</th>
-                            <th style="text-align: center;">CONSUMO (Agua fría)</th>
-                            <!-- <th style="text-align: center;">CONSUMO (Agua caliente)</th> -->
+                            <th></th>
+                            <th>Planta</th>
+                            <th style="text-align: center;">Consumo (Agua fría)</th>
                         </tr>
                         <tr *ngFor="let data of dataConsumo">
+                            <th></th>
                             <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
                             <td style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
-                            <!-- <td style="text-align: center;">{{ data.consumocalientetotal  | number:'1.2-2':'en-US'}}</td> -->
                         </tr>
                         <tr >
+                            <th></th>
                             <th>Total Consumo</th>
                             <th style="text-align: center; font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</th>
-                            <!-- <td style="text-align: center; font-weight: bold;">{{ totalConsumoCaliente | number:'1.2-2':'en-US'}}</td> -->
                         </tr>
-                    </table>
+                    </nz-table> -->
+                    
+                    <nz-table #nestedTable [nzData]="dataConsumo" [nzShowPagination]="false">
+                        <thead>
+                        <tr>
+                            <th nzAlign="center"></th>
+                            <th nzAlign="center">Planta</th>
+                            <th  nzAlign="center">Consumo</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+                            <tr>
+                            <td nzAlign="center" [(nzExpand)]="data.equipos.expands"></td>
+                            <td nzAlign="center">{{ data.locacion.descripcion }}</td>
+                            <td nzAlign="center">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
+                            </tr>
+                            <tr [nzExpand]="data.equipos.expands">
+                            <nz-table #innerTable [nzData]="data.equipos.datos" nzSize="middle" [nzShowPagination]="false">
+                                <thead>
+                                <tr>
+                                    <th nzAlign="center">Equipo</th>
+                                    <th nzAlign="center">Tag</th>
+                                    <th nzAlign="center">Valor</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let data of innerTable.data">
+                                <tr>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 1">{{ data.descripcion }}</td>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 1">{{ data.tag_name }}</td>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 1">{{ data.consumo  | number:'1.2-2':'en-US'}}</td>
+                                </tr>
+                                </tbody>
+                            </nz-table>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </nz-table>
+                        
                 </div>
             </div>
         </div>
@@ -124,9 +162,9 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <table>
+                    <!-- <table>
                         <tr class="headerTable">
-                            <th>PLANTA</th>
+                            <th>Planta</th>
                             <th style="text-align: center;">Pruducción</th>
                         </tr>
                         <tr *ngFor="let data of dataConsumo">
@@ -137,7 +175,45 @@
                             <th>Total Produccion</th>
                             <th style="text-align: center; font-weight: bold;">{{totalProduccion  | number:'1.2-2':'en-US'}}</th>
                         </tr>
-                    </table>
+                    </table> -->
+                    
+                    
+                    <nz-table #nestedTable [nzData]="dataConsumo" [nzShowPagination]="false">
+                        <thead>
+                        <tr>
+                            <th nzAlign="center"></th>
+                            <th nzAlign="center">Planta</th>
+                            <th  nzAlign="center">Producción</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+                            <tr>
+                            <td nzAlign="center" [(nzExpand)]="data.equipos.expands"></td>
+                            <td nzAlign="center">{{ data.locacion.descripcion }}</td>
+                            <td nzAlign="center">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
+                            </tr>
+                            <tr [nzExpand]="data.equipos.expands">
+                            <nz-table #innerTable [nzData]="data.equipos.datos" nzSize="middle" [nzShowPagination]="false">
+                                <thead>
+                                <tr>
+                                    <th nzAlign="center">Equipo</th>
+                                    <th nzAlign="center">Tag</th>
+                                    <th nzAlign="center">Valor</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let data of innerTable.data">
+                                <tr>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 3">{{ data.descripcion }}</td>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 3">{{ data.tag_name }}</td>
+                                    <td nzAlign="center" *ngIf="data.tipoFuncionId == 3">{{ data.consumo  | number:'1.2-2':'en-US'}}</td>
+                                </tr>
+                                </tbody>
+                            </nz-table>
+                            </tr>
+                        </ng-template>
+                        </tbody>
+                    </nz-table>
                 </div>
             </div>
         </div>
@@ -220,23 +296,23 @@
                     <table>
                         <tr class="headerTable">
                             <th>PLANTA</th>
-                            <th style="text-align: center;">Consumo (Agua fría)</th>
                             <!-- <th style="text-align: center;">Consumo (Agua caliente)</th> -->
                             <th style="text-align: center;">Producción </th>
+                            <th style="text-align: center;">Consumo (Agua fría)</th>
                             <th style="text-align: center;">Producción - Consumo total </th>
                         </tr>
                         <tr *ngFor="let data of dataConsumo">
                             <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
+                            <td style="text-align: center;">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
                             <td style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
                             <!-- <td style="text-align: center;">{{ data.consumocalientetotal  | number:'1.2-2':'en-US'}}</td> -->
-                            <td style="text-align: center;">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
                             <td style="text-align: center;">{{ data.producciontotal - (data.consumototal) | number:'1.2-2':'en-US'}}</td>
                         </tr>
                         <tr >
                             <th>Total Consumo</th>
+                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion| number:'1.2-2':'en-US'}}</td>
                             <th style="text-align: center; font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</th>
                             <!-- <td style="text-align: center; font-weight: bold;">{{ totalConsumoCaliente | number:'1.2-2':'en-US'}}</td> -->
-                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion| number:'1.2-2':'en-US'}}</td>
                             <td style="text-align: center; font-weight: bold;">{{ totalProduccion - (totalConsumo)| number:'1.2-2':'en-US'}}</td>
                         </tr>
                     </table>
