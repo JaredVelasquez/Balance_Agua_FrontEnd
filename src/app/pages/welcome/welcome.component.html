@@ -123,12 +123,12 @@
                         </thead>
                         <tbody>
                         <ng-template ngFor let-data [ngForOf]="nestedTable.data">
-                            <tr>
+                            <tr *ngIf="data.locacion.tipoLocacionId == 1">
                             <td nzAlign="center" [(nzExpand)]="data.equipos.expands"></td>
                             <td nzAlign="center">{{ data.locacion.descripcion }}</td>
                             <td nzAlign="center">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
                             </tr>
-                            <tr [nzExpand]="data.equipos.expands">
+                            <tr [nzExpand]="data.equipos.expands" *ngIf="data.locacion.tipoLocacionId == 1">
                             <nz-table #innerTable [nzData]="data.equipos.datos" nzSize="middle" [nzShowPagination]="false">
                                 <thead>
                                 <tr>
@@ -188,12 +188,12 @@
                         </thead>
                         <tbody>
                         <ng-template ngFor let-data [ngForOf]="nestedTable.data">
-                            <tr>
-                            <td nzAlign="center" [(nzExpand)]="data.equipos.expands"></td>
+                            <tr *ngIf="data.locacion.tipoLocacionId == 1">
+                            <td nzAlign="center" [(nzExpand)]="data.equipos.expands2"></td>
                             <td nzAlign="center">{{ data.locacion.descripcion }}</td>
                             <td nzAlign="center">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
                             </tr>
-                            <tr [nzExpand]="data.equipos.expands">
+                            <tr [nzExpand]="data.equipos.expands2" *ngIf="data.locacion.tipoLocacionId == 1">
                             <nz-table #innerTable [nzData]="data.equipos.datos" nzSize="middle" [nzShowPagination]="false">
                                 <thead>
                                 <tr>
@@ -229,7 +229,7 @@
                 </div>
                 <div class="card-body-Grafico">
                     <div>
-                        <canvas id="canvasConsumo">{{chartConsumo}}</canvas>
+                        <canvas id="canvasConsumo" [height]="400">{{chartConsumo}}</canvas>
                     </div>
                 </div>
             </div>
@@ -244,7 +244,7 @@
                 <div class="card-body-Grafico">
 
                     <div>
-                        <canvas id="canvasProduccion">{{chartProduccion}}</canvas>
+                        <canvas id="canvasProduccion" [height]="400">{{chartProduccion}}</canvas>
                     </div>
                 </div>
             </div>
@@ -274,7 +274,7 @@
                         <h4 style="font-size: 18px;">Tabla comparativa (producción, total agua consumida)</h4>
                     </div>
                 </div>
-                <div class="card-body-Grafico">
+                <div>
 
                     <div>
                         <canvas id="aguaVSproduccion" width="1000px" height="400"></canvas>
@@ -284,45 +284,121 @@
         </div>
     </div>
     <br>
-    <div nz-row>
-        <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 15px;">
-            <div class="card">
-                <div class="card-header">
-                    <div class="titleHeader">
-                        <h4 style="font-size: 18px;">Cuadro comparativo</h4>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <table>
-                        <tr class="headerTable">
-                            <th>PLANTA</th>
-                            <!-- <th style="text-align: center;">Consumo (Agua caliente)</th> -->
-                            <th style="text-align: center;">Producción </th>
-                            <th style="text-align: center;">Consumo (Agua fría)</th>
-                            <th style="text-align: center;">Producción - Consumo total </th>
-                        </tr>
-                        <tr *ngFor="let data of dataConsumo">
-                            <td style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
-                            <td style="text-align: center;">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
-                            <td style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
-                            <!-- <td style="text-align: center;">{{ data.consumocalientetotal  | number:'1.2-2':'en-US'}}</td> -->
-                            <td style="text-align: center;">{{ data.producciontotal - (data.consumototal) | number:'1.2-2':'en-US'}}</td>
-                        </tr>
-                        <tr >
-                            <th>Total Consumo</th>
-                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion| number:'1.2-2':'en-US'}}</td>
-                            <th style="text-align: center; font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</th>
-                            <!-- <td style="text-align: center; font-weight: bold;">{{ totalConsumoCaliente | number:'1.2-2':'en-US'}}</td> -->
-                            <td style="text-align: center; font-weight: bold;">{{ totalProduccion - (totalConsumo)| number:'1.2-2':'en-US'}}</td>
-                        </tr>
-                    </table>
+    <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 15px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="titleHeader">
+                    <h4 style="font-size: 18px;">Calidad de agua</h4>
                 </div>
             </div>
+            <div class="card-body">
+                
+                <nz-table #nestedTable [nzData]="dataConsumo" [nzShowPagination]="false">
+                    <thead>
+                    <tr>
+                        <th nzAlign="center"></th>
+                        <th nzAlign="center">Locación</th>
+                        <th nzAlign="center">Conductividad</th>
+                        <th  nzAlign="center">Potencial de reducción</th>
+                        <th  nzAlign="center">Potencial de hidrogeno</th>
+                        <th  nzAlign="center">Presión</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <ng-template ngFor let-data [ngForOf]="nestedTable.data">
+                            <tr *ngIf="data.locacion.tipoLocacionId == 1">
+                            <td nzAlign="center" [(nzExpand)]="data.equipos.expands3"></td>
+                            <td nzAlign="center">{{ data.locacion.descripcion }}</td>
+                            <td nzAlign="center">{{ data.calidadagua.conductividadPromedio  | number:'1.2-2':'en-US'}}</td>
+                            <td nzAlign="center">{{ data.calidadagua.potencialreduccionPromedio  | number:'1.2-2':'en-US'}}</td>
+                            <td nzAlign="center">{{ data.calidadagua.potencialhidrogenoPromedio  | number:'1.2-2':'en-US'}}</td>
+                            <td nzAlign="center">{{ data.calidadagua.presionPromedio   | number:'1.2-2':'en-US'}}</td>
+                            </tr>
+                            <tr [nzExpand]="data.equipos.expands3" *ngIf="data.locacion.tipoLocacionId == 1">
+                            <nz-table #innerTable [nzData]="data.locacionesRelacionadas" nzSize="middle" [nzShowPagination]="false">
+                                <thead>
+                                <tr>
+                                    <th nzAlign="center">Equipo</th>
+                                    <th nzAlign="center">Conductividad</th>
+                                    <th  nzAlign="center">Potencial de reducción</th>
+                                    <th  nzAlign="center">Potencial de hidrogeno</th>
+                                    <th  nzAlign="center">Presión</th>
+                                </tr>
+                                </thead>
+                                <tbody *ngFor="let data of innerTable.data">
+                                <tr>
+                                    <td nzAlign="center">{{ data.locacion.descripcion }}</td>
+                                    <td nzAlign="center">{{ data.calidadagua.conductividadPromedio  | number:'1.2-2':'en-US'}}</td>
+                                    <td nzAlign="center">{{ data.calidadagua.potencialreduccionPromedio  | number:'1.2-2':'en-US'}}</td>
+                                    <td nzAlign="center">{{ data.calidadagua.potencialhidrogenoPromedio  | number:'1.2-2':'en-US'}}</td>
+                                    <td nzAlign="center">{{ data.calidadagua.presionPromedio   | number:'1.2-2':'en-US'}}</td>
+                                </tr>
+                                </tbody>
+                            </nz-table>
+                            </tr>
+                    </ng-template>
+                    </tbody>
+                </nz-table>
+                    
+            </div>
         </div>
-
-
     </div>
     <br>
+    <div nz-row>
+    <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 8px;">
+        <!-- <div class="card">
+            <div class="card-header" style="background: #aad6fd;">
+                <div class="titleHeader">
+                    <h4 style="font-size: 18px;">Tabla comparativa (producción, total agua consumida)</h4>
+                </div>
+            </div>
+            <div>
+
+                <div>
+                    <canvas id="graficoHistorico" width="1000px" height="400"></canvas>
+                </div>
+            </div>
+        </div> -->
+    </div>
+</div>
+<br>
+    <div nz-col nzSpan="24" style="padding-left: 15px; padding-right: 15px;">
+        <div class="card">
+            <div class="card-header">
+                <div class="titleHeader">
+                    <h4 style="font-size: 18px;">Cuadro comparativo</h4>
+                </div>
+            </div>
+            <div class="card-body">
+                
+                <nz-table #nestedTable [nzData]="dataConsumo" [nzShowPagination]="false">
+                    <thead>
+                    <tr>
+                        <th>Planta</th>
+                        <th nzAlign="center">Producción </th>
+                        <th nzAlign="center">Consumo (Agua fría)</th>
+                        <th nzAlign="center">Producción - Consumo total </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let data of dataConsumo" >
+                            <td  *ngIf="data.locacion.tipoLocacionId == 1" style="text-align: center; font-weight: bold;">{{ data.locacion.descripcion}}</td>
+                            <td  *ngIf="data.locacion.tipoLocacionId == 1" style="text-align: center;">{{ data.producciontotal  | number:'1.2-2':'en-US'}}</td>
+                            <td *ngIf="data.locacion.tipoLocacionId == 1" style="text-align: center;">{{ data.consumototal  | number:'1.2-2':'en-US'}}</td>
+                            <td *ngIf="data.locacion.tipoLocacionId == 1" style="text-align: center;">{{ data.producciontotal - (data.consumototal) | number:'1.2-2':'en-US'}}</td>
+                        </tr>
+                        <tr >
+                            <td nzAlign="center" style="font-weight: bold;">Total Consumo</td>
+                            <td nzAlign="center" style="font-weight: bold;">{{ totalProduccion| number:'1.2-2':'en-US'}}</td>
+                            <td  nzAlign="center" style="font-weight: bold;">{{totalConsumo  | number:'1.2-2':'en-US'}}</td>
+                            <td nzAlign="center" style="font-weight: bold;">{{ totalProduccion - (totalConsumo)| number:'1.2-2':'en-US'}}</td>
+                        </tr>
+                    </tbody>
+                </nz-table>
+                    
+            </div>
+        </div>
+    </div>
     <br>
 </div>
 

@@ -1,0 +1,158 @@
+<!-- FILTROS -->
+<div>
+    <div  style="display: flex; justify-content: center;" nz-row>
+        <div style="text-align: center;" nz-col nzSpan="6">
+            <h3>Rango de Tiempo</h3>
+        </div>
+    </div>
+    <form nz-form  [formGroup]="validateForm">
+    <div   style="display: flex; " nz-row>
+
+        <div class="margenesFiltros" nz-col nzSpan="6" nzOffset="3">
+            <nz-input-group nzAddOnBefore="Tiempo" nzSize="small" >
+                <nz-select nzSize="small" formControlName="tiempo" (ngModelChange)="changeFecha($event)" style="width: 100%;">
+                    <nz-option nzLabel="Ayer" [nzValue]=1></nz-option>
+                    <nz-option nzLabel="Esta Semana hasta la fecha" [nzValue]=2></nz-option>
+                    <nz-option nzLabel="Este Mes hasta la fecha" [nzValue]=6></nz-option>
+                    <nz-option nzLabel="Este Año hasta la fecha" [nzValue]=3></nz-option>
+                    <nz-option nzLabel="Ultima semana" [nzValue]=4></nz-option>
+                    <nz-option nzLabel="Ultimas 2 semanas" [nzValue]=5></nz-option>
+                    <nz-option nzLabel="Ultimo mes" [nzValue]=7></nz-option>
+                    <nz-option nzLabel="Ultimo año" [nzValue]=8></nz-option>
+                    <nz-option nzLabel="Rango de fecha" [nzValue]=9></nz-option>
+                </nz-select>
+            </nz-input-group>
+
+        </div>
+        <div class="margenesFiltros" nz-col nzSpan="6"   style="display: flex; justify-content: center;">
+                <nz-input-group nzAddOnBefore="Fecha" nzSize="default">
+                    <nz-range-picker [nzShowTime]="true"
+                        nzFormat="yyyy-MM-dd HH:mm" nzSize="small" formControlName="fecha" [nzDisabled]="habilitarfecha">
+                    </nz-range-picker>
+                </nz-input-group>
+        </div>
+
+        <div class="margenesFiltros" nz-col nzSpan="6" nzOffset="3">
+            <nz-input-group nzAddOnBefore="Espacio de tiempo" nzSize="small" >
+                <nz-select nzSize="small" formControlName="retrieval"style="width: 100%;">
+                    <nz-option nzLabel="15 minutos" [nzValue]=1></nz-option>
+                    <nz-option nzLabel="30   minutos" [nzValue]=2></nz-option>
+                    <nz-option nzLabel="1 hora" [nzValue]=6></nz-option>
+                    <nz-option nzLabel="2 horas" [nzValue]=3></nz-option>
+                    <nz-option nzLabel="6 horas" [nzValue]=4></nz-option>
+                    <nz-option nzLabel="12 horas" [nzValue]=5></nz-option>
+                    <nz-option nzLabel="1 dia" [nzValue]=7></nz-option>
+                </nz-select>
+            </nz-input-group>
+
+        </div>
+
+    </div>
+</form>
+
+<div nz-row  style="display: flex; justify-content: center;">
+    <div nz-col >
+        <button nz-button class="margenesFiltros" (click)="mostrar()"
+            style="background-color: #009bca; border-color: #009bca;" nzType="primary" nzSize="small"><i nz-icon
+                nzType="search"></i>Consultar</button>
+        <button nz-button class="margenesFiltros"  (click)="excel()"
+        style="background-color: #439d16; border-color: #439d16;"
+            nzType="primary" nzSize="small"><i nz-icon nzType="file-excel"></i>Excel</button>
+        <button nz-button class="margenesFiltros" (click)="pdf()"
+            style="background-color: #c41a1a; border-color: #c41a1a;" nzType="primary" nzSize="small"><i nz-icon
+                nzType="printer"></i>Pdf</button>
+    </div>
+
+</div>
+
+
+</div>
+
+
+<br> 
+
+<div id="content">
+    <div nz-row>
+        <div nz-col nzSpan="24" style="display: flex; justify-content: center;">
+            <img src="assets/Gildan_logo.png" class="logo">
+        </div>
+    </div>
+    <div nz-row nzAlign="middle">
+        <div nz-col nzSpan="24">
+            <h2 style="display: flex; justify-content: center; font-size: 26px;"> Detalle Consumo</h2>
+        </div>
+    </div>
+
+    <div nz-row >
+        <div  nz-col nzSpan="24"  style="padding-left: 15px; padding-right: 15px;">
+            <div class="card">
+                <div class="card-header">
+                    <div class="titleHeader">
+                        <h4 style="font-size: 18px;"></h4>
+                    </div>
+                </div>
+                <div style="background-color: #c3eaf6;" class="card-body" style="font-size: 13px; height: 80px;" >
+                    <p><span>Ubicacion: Todas las plantas</span></p>
+                    <p><span>Fecha: </span></p>
+                </div>
+                
+            </div>
+
+        </div>
+    </div>
+    <br>
+    <nz-table style="padding-left: 15px; padding-right: 15px;" 
+    #groupingTable [nzData]="listOfData" nzBordered nzSize="middle" [nzScroll]="{ x: '1200px', y: '100%   ' }">
+        <thead>
+          <tr>
+            <th rowspan="2">Fecha</th>
+            <th colspan="2" *ngFor="let data of groupingTable.data">{{data.locacion.descripcion}}</th>
+          </tr>
+          <tr >
+            <ng-container *ngFor="let data of groupingTable.data">
+                
+            <th>Consumo</th>
+            <th>Producción</th>
+            </ng-container>
+            
+          </tr>
+        </thead>
+        <tbody >
+            <ng-container *ngFor="let data of historicoConsumo">
+                <tr>
+                    <td >{{ data.date  | date:'dd/M/yyyy hh:mm':'GMT' }}</td>
+                    <td >{{ data.r2 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r2Prod | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r1 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r1Prod | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r3 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r3Prod | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r4 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r4Prod | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r5 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r5Prod | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r6 | number:'1.2-2':'en-US'}}</td>
+                    <td >{{ data.r6Prod | number:'1.2-2':'en-US'}}</td>
+                </tr>
+            </ng-container>
+            
+            <tr style="font-weight: bold; background-color: #bebebe;">
+                <td >Total</td>
+                <td >{{ totales.r1Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r1Prod | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r2Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r2Prod | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r3Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r3Prod | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r4Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r4Prod | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r5Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r5Prod | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r6Consumo | number:'1.2-2':'en-US'}}</td>
+                <td >{{ totales.r6Prod | number:'1.2-2':'en-US'}}</td>
+            </tr>
+            
+        </tbody>
+      </nz-table>
+
+</div>
