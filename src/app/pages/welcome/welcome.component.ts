@@ -9,24 +9,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as FileSaver from 'file-saver';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-interface ParentItemData {
-  key: number;
-  name: string;
-  platform: string;
-  version: string;
-  upgradeNum: number | string;
-  creator: string;
-  createdAt: string;
-  expand: boolean;
-}
-
-interface ChildrenItemData {
-  key: number;
-  name: string;
-  date: string;
-  upgradeNum: string;
-}
-
 @Component({
   selector: 'app-welcome',
   templateUrl: './welcome.component.html',
@@ -41,11 +23,6 @@ export class WelcomeComponent implements OnInit {
   habilitarfecha: boolean = true;
   facturado: boolean = false;
 
-  
-
-//Variables nuevas
-  listOfParentData: ParentItemData[] = [];
-  listOfChildrenData: ChildrenItemData[] = [];
   totalConsumo: number = 0;
   totalProduccion: number = 0;
   totalReposicion: number = 0;
@@ -76,27 +53,6 @@ export class WelcomeComponent implements OnInit {
   ngOnInit(): void {
     this.CleanFrom();
     this.mostrar();
-    console.log(this.dataConsumo);
-    for (let i = 0; i < 3; ++i) {
-      this.listOfParentData.push({
-        key: i,
-        name: 'Screem',
-        platform: 'iOS',
-        version: '10.3.4.5654',
-        upgradeNum: 500,
-        creator: 'Jack',
-        createdAt: '2014-12-24 23:12:00',
-        expand: false
-      });
-    }
-    for (let i = 0; i < 3; ++i) {
-      this.listOfChildrenData.push({
-        key: i,
-        date: '2014-12-24 23:12:00',
-        name: 'This is production name',
-        upgradeNum: 'Upgraded: 56'
-      });
-    }
   }
 
   CleanFrom(){
@@ -142,6 +98,10 @@ export class WelcomeComponent implements OnInit {
   }
 
   async mostrar() {
+    console.log("fecha convertida");
+    
+    console.log(new Date((1669847829)* 1000).toLocaleDateString());
+    console.log(Math.abs(-2));
     
       switch (this.validateForm.value.tiempo) {
         case 1: {
