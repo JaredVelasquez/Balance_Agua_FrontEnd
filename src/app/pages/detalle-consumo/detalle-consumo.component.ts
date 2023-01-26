@@ -8,6 +8,7 @@ import { ConsumoDetallePlanta, ConsumoPlantaRangoFecha, esquemaDatos, GraficoPie
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as FileSaver from 'file-saver';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-detalle-consumo',
@@ -28,7 +29,7 @@ export class DetalleConsumoComponent implements OnInit {
   totalConsumoCaliente: number = 0;
   totalDiferencia: number = 0;
   chartConsumo!: Chart<"pie", string[], string>;
-  chartProduccion!: Chart<"pie", string[], string>;
+  chartProduccion!: Chart<"line", string[], string>;
   chartHistorico!: Chart<keyof ChartTypeRegistry, number[], string>;
   chartBarraComparativa!: Chart;
   aguaVSproduccion!: Chart;
@@ -43,6 +44,21 @@ export class DetalleConsumoComponent implements OnInit {
   dataExcel: any[] = [];
   historicoConsumo: HistoricoConsumo[] = [];
   totales!: TotalesHistorico;
+  labelsGragicos: Array<string> = [];
+  r1consumo: Array<number> = [];
+  r2consumo: Array<number> = [];
+  r3consumo: Array<number> = [];
+  r4consumo: Array<number> = [];
+  r5consumo: Array<number> = [];
+  r6consumo: Array<number> = [];
+  r1prod: Array<number> = [];
+  r2prod: Array<number> = [];
+  r3prod: Array<number> = [];
+  r4prod: Array<number> = [];
+  r5prod: Array<number> = [];
+  r6prod: Array<number> = [];
+
+
   constructor(
     private endPoint: EndPointService,
     private fb: FormBuilder,
@@ -52,7 +68,6 @@ export class DetalleConsumoComponent implements OnInit {
 
     this.CleanFrom();
     this.mostrar();
-    console.log(this.dataConsumo);
   }
 
   CleanFrom(){
@@ -66,10 +81,8 @@ export class DetalleConsumoComponent implements OnInit {
   submitForm(){
       this.validateForm.value.fecha[0] = moment(this.validateForm.value.fecha[0]).format('YYYY-MM-DD hh:mm');  
       this.validateForm.value.fecha[1] = moment(this.validateForm.value.fecha[1]).format('YYYY-MM-DD hh:mm');  
-      
       this.fechaInicio = this.validateForm.value.fecha[0];
       this.fechaFin = this.validateForm.value.fecha[1];
-      console.log(this.validateForm.value.fecha);
       
       this.endPoint.Post( {
         fechaInicial: this.validateForm.value.fecha[0],
@@ -78,17 +91,83 @@ export class DetalleConsumoComponent implements OnInit {
       } ,'consumo-detalle').subscribe(
         (result: any) => {
           this.listOfData = result;
-          console.log(this.listOfData);
-          
           this.agregarConsumos(this.listOfData);
           this.historicoConsumo = [... this.historicoConsumo];
-          console.log(this.historicoConsumo);
+          console.log(this.listOfData);
+          this.ConstruirGraficos(this.listOfData, this.historicoConsumo,this.r1consumo,
+            this.r2consumo,
+            this.r3consumo,
+            this.r4consumo,
+            this.r5consumo,
+            this.r6consumo,
+            this.r1prod,
+            this.r2prod,
+            this.r3prod,
+            this.r4prod,
+            this.r5prod,
+            this.r6prod);
           
         }
       );
+      this.chartProduccion.update();
       console.log(this.validateForm.value);
   }
   
+  ConstruirGraficos(data: ConsumoDetallePlanta[], historicoConsumo: HistoricoConsumo[],
+    r1consumo: Array<number>,
+    r2consumo: Array<number>,
+    r3consumo: Array<number>,
+    r4consumo: Array<number>,
+    r5consumo: Array<number>,
+    r6consumo: Array<number>,
+    r1prod: Array<number>,
+    r2prod: Array<number>,
+    r3prod: Array<number>,
+    r4prod: Array<number>,
+    r5prod: Array<number>,
+    r6prod: Array<number>) {
+      console.log("r1");
+      console.log(r1consumo);
+      
+      
+    this.chartProduccion = new Chart('canvasProduccion', {
+      type: 'line',
+      data: {
+        labels: historicoConsumo.map(item => formatDate(item.date, "d/M/Y hh:mm" , 'en-US', 'UTC/GMT')),
+        datasets: [{
+          label: 'R1',
+          data: r1consumo.map(item => item.toString()),
+          backgroundColor: 'rgba(255, 159, 64)',
+        },
+        {
+          label: 'R2',
+          data: r2consumo.map(item => (item).toString()),
+          backgroundColor: 'rgba(255, 99, 132)'
+        },
+        {
+          label: 'R3',
+          data: r3consumo.map(item => item.toString()),
+          backgroundColor: 'rgba(255, 99, 132)'
+        },
+        {
+          label: 'R4',
+          data: r4consumo.map(item => item.toString()),
+          backgroundColor: 'rgba(255, 99, 132)'
+        },
+        {
+          label: 'R5',
+          data: r5consumo.map(item => item.toString()),
+          backgroundColor: 'rgba(255, 99, 132)'
+        },
+        {
+          label: 'R6',
+          data: r6consumo.map(item => item.toString()),
+          backgroundColor: 'rgba(255, 99, 132)'
+        }
+    ]}
+    });
+  
+  }
   agregarConsumos(listOfData: ConsumoDetallePlanta[]){
     this.historicoConsumo.length = 0;
     let consumor1: number = 0, consumor2: number = 0, consumor3: number = 0, consumor4: number = 0, consumor5: number = 0, consumor6: number = 0;
@@ -101,6 +180,19 @@ export class DetalleConsumoComponent implements OnInit {
       }
     }
     for (let i = 0; i < maxWith; i++) {
+      
+        this.r1consumo.push(0);
+        this.r2consumo.push(0);
+        this.r3consumo.push(0);
+        this.r4consumo.push(0);
+        this.r5consumo.push(0);
+        this.r6consumo.push(0);
+        this.r1prod.push(0);
+        this.r2prod.push(0);
+        this.r3prod.push(0);
+        this.r4prod.push(0);
+        this.r5prod.push(0);
+        this.r6prod.push(0);
       this.historicoConsumo.push({
         date: new Date(Date.now()),
         r1: 0,
@@ -121,122 +213,80 @@ export class DetalleConsumoComponent implements OnInit {
     
     for (let i = 0; i < listOfData.length; i++) {
       for (let j = 0; j < listOfData[i].historicoLocacion.length; j++) {
-        if(i == 0){
-          console.log(listOfData[i].historicoLocacion[j].diferencia);
-          
-          this.historicoConsumo[j].date = listOfData[i].historicoLocacion[j].date;
-          this.historicoConsumo[j].r2 = listOfData[i].historicoLocacion[j].diferencia;
-          this.historicoConsumo[j].r1 = this.historicoConsumo[j].r1;
-          this.historicoConsumo[j].r3 = this.historicoConsumo[j].r3;
-          this.historicoConsumo[j].r4 = this.historicoConsumo[j].r4;
-          this.historicoConsumo[j].r5 = this.historicoConsumo[j].r5;
-          this.historicoConsumo[j].r6 = this.historicoConsumo[j].r6;
-          consumor1 += listOfData[i].historicoLocacion[j].diferencia;
-        }
-        if(i == 1){
-          this.historicoConsumo[j].r2 = this.historicoConsumo[j].r2;
-          this.historicoConsumo[j].r1 = listOfData[i].historicoLocacion[j].diferencia;
-          this.historicoConsumo[j].r3 = this.historicoConsumo[j].r3;
-          this.historicoConsumo[j].r4 = this.historicoConsumo[j].r4;
-          this.historicoConsumo[j].r5 = this.historicoConsumo[j].r5;
-          this.historicoConsumo[j].r6 = this.historicoConsumo[j].r6;
-          consumor2 += listOfData[i].historicoLocacion[j].diferencia;
-        }
-        if(i == 2){
-          this.historicoConsumo[j].r2 = this.historicoConsumo[j].r2;
-          this.historicoConsumo[j].r1 = this.historicoConsumo[j].r1;
-          this.historicoConsumo[j].r3 = listOfData[i].historicoLocacion[j].diferencia;
-          this.historicoConsumo[j].r4 = this.historicoConsumo[j].r4;
-          this.historicoConsumo[j].r5 = this.historicoConsumo[j].r5;
-          this.historicoConsumo[j].r6 = this.historicoConsumo[j].r6;
-          consumor3 += listOfData[i].historicoLocacion[j].diferencia;
-        }
-        if(i == 3){
-          this.historicoConsumo[j].r2 = this.historicoConsumo[j].r2;
-          this.historicoConsumo[j].r1 = this.historicoConsumo[j].r1;
-          this.historicoConsumo[j].r3 = this.historicoConsumo[j].r3;
-          this.historicoConsumo[j].r4 = listOfData[i].historicoLocacion[j].diferencia;
-          this.historicoConsumo[j].r5 = this.historicoConsumo[j].r5;
-          this.historicoConsumo[j].r6 = this.historicoConsumo[j].r6;
-          consumor4 += listOfData[i].historicoLocacion[j].diferencia;
-        }
-        if(i == 4){
-          this.historicoConsumo[j].r2 = this.historicoConsumo[j].r2;
-          this.historicoConsumo[j].r1 = this.historicoConsumo[j].r1;
-          this.historicoConsumo[j].r3 = this.historicoConsumo[j].r3;
-          this.historicoConsumo[j].r4 = this.historicoConsumo[j].r4;
-          this.historicoConsumo[j].r5 = listOfData[i].historicoLocacion[j].diferencia;
-          this.historicoConsumo[j].r6 = this.historicoConsumo[j].r6;
-          consumor5 += listOfData[i].historicoLocacion[j].diferencia;
-        }
-        if(i == 5){
-          this.historicoConsumo[j].r2 = this.historicoConsumo[j].r2;
-          this.historicoConsumo[j].r1 = this.historicoConsumo[j].r1;
-          this.historicoConsumo[j].r3 = this.historicoConsumo[j].r3;
-          this.historicoConsumo[j].r4 = this.historicoConsumo[j].r4;
-          this.historicoConsumo[j].r5 = this.historicoConsumo[j].r5;
-          this.historicoConsumo[j].r6 = listOfData[i].historicoLocacion[j].diferencia;
-          consumor6 += listOfData[i].historicoLocacion[j].diferencia;
+        if(listOfData[i].historicoLocacion[j].diferencia != null){
+          if(i == 0){
+            console.log(listOfData[i].historicoLocacion[j].diferencia);
+            
+            this.r2consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].date = listOfData[i].historicoLocacion[j].date;
+            this.historicoConsumo[j].r2 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor1 += listOfData[i].historicoLocacion[j].diferencia;
+          }
+          if(i == 1){
+            this.r1consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].r1 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor2 += listOfData[i].historicoLocacion[j].diferencia;
+          }
+          if(i == 2){
+            this.r3consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].r3 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor3 += listOfData[i].historicoLocacion[j].diferencia;
+          }
+          if(i == 3){
+            this.r4consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].r4 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor4 += listOfData[i].historicoLocacion[j].diferencia;
+          }
+          if(i == 4){
+            this.r5consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].r5 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor5 += listOfData[i].historicoLocacion[j].diferencia;
+          }
+          if(i == 5){
+            this.r6consumo[j] = (listOfData[i].historicoLocacion[j].diferencia);
+            this.historicoConsumo[j].r6 = listOfData[i].historicoLocacion[j].diferencia;
+            consumor6 += listOfData[i].historicoLocacion[j].diferencia;
+          }
         }
       }
-      for (let j = 0; j < listOfData[i].historicoProduccionLocacion.length; j++) {
-        if(i == 0){
-          console.log(listOfData[i].historicoProduccionLocacion[j].diferencia);
-          
-          this.historicoConsumo[j].date = listOfData[i].historicoProduccionLocacion[j].date;
-          this.historicoConsumo[j].r2Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          this.historicoConsumo[j].r1Prod = this.historicoConsumo[j].r1Prod;
-          this.historicoConsumo[j].r3Prod = this.historicoConsumo[j].r3Prod;
-          this.historicoConsumo[j].r4Prod = this.historicoConsumo[j].r4Prod;
-          this.historicoConsumo[j].r5Prod = this.historicoConsumo[j].r5Prod;
-          this.historicoConsumo[j].r6Prod = this.historicoConsumo[j].r6Prod;
-          prod1 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
-        if(i == 1){
-          this.historicoConsumo[j].r2Prod = this.historicoConsumo[j].r2Prod;
-          this.historicoConsumo[j].r1Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          this.historicoConsumo[j].r3Prod = this.historicoConsumo[j].r3Prod;
-          this.historicoConsumo[j].r4Prod = this.historicoConsumo[j].r4Prod;
-          this.historicoConsumo[j].r5Prod = this.historicoConsumo[j].r5Prod;
-          this.historicoConsumo[j].r6Prod = this.historicoConsumo[j].r6Prod;
-          prod2 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
-        if(i == 2){
-          this.historicoConsumo[j].r2Prod = this.historicoConsumo[j].r2Prod;
-          this.historicoConsumo[j].r1Prod = this.historicoConsumo[j].r1Prod;
-          this.historicoConsumo[j].r3Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          this.historicoConsumo[j].r4Prod = this.historicoConsumo[j].r4Prod;
-          this.historicoConsumo[j].r5Prod = this.historicoConsumo[j].r5Prod;
-          this.historicoConsumo[j].r6Prod = this.historicoConsumo[j].r6Prod;
-          prod3 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
-        if(i == 3){
-          this.historicoConsumo[j].r2Prod = this.historicoConsumo[j].r2Prod;
-          this.historicoConsumo[j].r1Prod = this.historicoConsumo[j].r1Prod;
-          this.historicoConsumo[j].r3Prod = this.historicoConsumo[j].r3Prod;
-          this.historicoConsumo[j].r4Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          this.historicoConsumo[j].r5Prod = this.historicoConsumo[j].r5Prod;
-          this.historicoConsumo[j].r6Prod = this.historicoConsumo[j].r6Prod;
-          prod4 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
-        if(i == 4){
-          this.historicoConsumo[j].r2Prod = this.historicoConsumo[j].r2Prod;
-          this.historicoConsumo[j].r1Prod = this.historicoConsumo[j].r1Prod;
-          this.historicoConsumo[j].r3Prod = this.historicoConsumo[j].r3Prod;
-          this.historicoConsumo[j].r4Prod = this.historicoConsumo[j].r4Prod;
-          this.historicoConsumo[j].r5Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          this.historicoConsumo[j].r6Prod = this.historicoConsumo[j].r6Prod;
-          prod5 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
-        if(i == 5){
-          this.historicoConsumo[j].r2Prod = this.historicoConsumo[j].r2Prod;
-          this.historicoConsumo[j].r1Prod = this.historicoConsumo[j].r1Prod;
-          this.historicoConsumo[j].r3Prod = this.historicoConsumo[j].r3Prod;
-          this.historicoConsumo[j].r4Prod = this.historicoConsumo[j].r4Prod;
-          this.historicoConsumo[j].r5Prod = this.historicoConsumo[j].r5Prod;
-          this.historicoConsumo[j].r6Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
-          prod6 += listOfData[i].historicoProduccionLocacion[j].diferencia;
-        }
+        for (let j = 0; j < listOfData[i].historicoProduccionLocacion.length; j++) {
+          if(listOfData[i].historicoProduccionLocacion[j].diferencia != null){
+            if(i == 0){
+              console.log(listOfData[i].historicoProduccionLocacion[j].diferencia);
+              
+              this.r2prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].date = listOfData[i].historicoProduccionLocacion[j].date;
+              this.historicoConsumo[j].r2Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod1 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+            if(i == 1){
+              this.r1prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].r1Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod2 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+            if(i == 2){
+              this.r3prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].r3Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod3 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+            if(i == 3){
+              this.r4prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].r4Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod4 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+            if(i == 4){
+              this.r4prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].r5Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod5 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+            if(i == 5){
+              this.r6prod[j] = (listOfData[i].historicoLocacion[j].diferencia);
+              this.historicoConsumo[j].r6Prod = listOfData[i].historicoProduccionLocacion[j].diferencia;
+              prod6 += listOfData[i].historicoProduccionLocacion[j].diferencia;
+            }
+
+          }
+
       }
     }
     this.totales ={
@@ -256,32 +306,6 @@ export class DetalleConsumoComponent implements OnInit {
 
   }
 
-  ConstruirGraficoPieConsumo(data: HistoricoConsumo[]) {
-    // const DATA_COUNT = 7;
-    // const NUMBER_CFG = {count: DATA_COUNT, min: 0, max: 100};
-    
-    // Chart.register(ChartDataLabels);
-    // this.chartHistorico  = new Chart('graficoHistorico', {
-    //   type: 'line',
-    //   data: {
-    //     labels: data.map(item => (item.date).toISOString()),
-    //     datasets: [
-    //       {
-    //         label: 'Dataset 2',
-    //         data: data.map(item => (item.)),
-    //         backgroundColor: 'rgba(0, 99, 132, 0.6)',
-    //         borderColor: 'rgba(0, 99, 132, 1)',
-    //         stack: 'line'
-          
-    //       }
-    //     ]
-    //   },
-    //   options:  {
-    //   }
-    // });
-  
-  
-  }
   
 
 
@@ -302,7 +326,9 @@ export class DetalleConsumoComponent implements OnInit {
 
   async mostrar() {
       console.log(this.validateForm);
-      
+      if (this.chartProduccion) {
+        this.chartProduccion.destroy();
+      }
       switch (this.validateForm.value.tiempo) {
         case 1: {
           console.log(moment().add(-1, 'day').startOf('day').format('YYYY-MM-DD HH:mm'), moment().startOf('day').format('YYYY-MM-DD HH:mm'));
@@ -372,7 +398,7 @@ export class DetalleConsumoComponent implements OnInit {
           break;
         }
         default: {
-          this.validateForm.value.fecha[0] =  "2022-08-31 11:00:00";
+          this.validateForm.value.fecha[0] =  "2022-08-31 7:30:00";
           this.validateForm.value.fecha[1] =  "2022-08-31 11:30:00";
           this.submitForm();
           break;
